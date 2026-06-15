@@ -1,0 +1,17 @@
+{
+  "name": "ashraf",
+  "version": "1.0.0",
+  "description": "a classic node server project",
+  "keywords": [
+    "node",
+    "project"
+  ],
+  "license": "ISC",
+  "author": "ashraf",
+  "type": "module",
+  "main": "index.js, index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  }
+}
