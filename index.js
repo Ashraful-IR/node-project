@@ -1,29 +1,44 @@
 import http from "http";
 
+const userData = [
+    { id: 1, name: "John Doe" },
+    { id: 2, name: "Jane Doe" },
+    { id: 3, name: "Alice Smith" },
+    { id: 4, name: "Bob Johnson" },
+    { id: 5, name: "Charlie Brown" },
+];
+
 const server = http.createServer((req, res) => {
     if (req.method === "GET" && req.url === "/") {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        return res.end("Hello, World!");
-    } else if (req.method === "GET" && req.url === "/about") {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        return res.end("This is the about page.");
-    } else if (req.method === "POST" && req.url === "/submit") {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify(userData));
+    }
+
+    if (req.method === "GET" && req.url.startsWith("/users/")) {
+        const userId = parseInt(req.url.split("/")[2], 10);
+        const user = userData.find((u) => u.id === userId);
+        if (user) {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(user));
+        } else {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify({ error: "User not found" }));
+        }
+    }
+    if (req.method === "POST" && req.url === "/users") {
         let body = "";
         req.on("data", (chunk) => {
             body += chunk.toString();
         });
         req.on("end", () => {
-            res.writeHead(200, { "Content-Type": "text/plain" });
-            return res.end("Data submitted successfully!");
+            const newUser = JSON.parse(body);
+            userData.push(newUser);
+            res.writeHead(201, { "Content-Type": "application/json" });
+            return res.end(JSON.stringify(newUser));
         });
-    }
-    else if (req.method === "GET" && req.url === "/contact") {
-        res.writeHead(200, { "Content-Type": "text/plain" });
-        return res.end("This is the contact page.");
-    }
-    else {
-        res.writeHead(404, { "Content-Type": "text/plain" });
-        return res.end("Not Found");
+    } else {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ error: "Not found" }));
     }
 });
 
